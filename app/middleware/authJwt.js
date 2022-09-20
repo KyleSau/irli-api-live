@@ -23,7 +23,7 @@ isAdmin = (req, res, next) => {
   User.findByPk(req.userId).then(user => {
     user.getRoles().then(roles => {
       for (let i = 0; i < roles.length; i++) {
-        if (roles[i].name === "admin" || user.role == "Admin") {
+        if (roles[i].name === "admin" || user.role == "Admin" || user.role == "Developer") {
           next();
           return;
         }
@@ -59,7 +59,7 @@ isModeratorOrAdmin = (req, res, next) => {
             next();
             return;
           }
-          if (roles[i].name === "admin" || user.role == "Admin") {
+          if (roles[i].name === "admin" || user.role == "Admin" || user.role == "Developer") {
             next();
             return;
           }

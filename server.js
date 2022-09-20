@@ -66,6 +66,9 @@ require('./app/routes/file.routes')(app);
 
 const map = new Map();
 
+//make sure to turn off strict mode
+//SET GLOBAL sql_mode = 'NO_ENGINE_SUBSTITUTION';
+
 /*
 const fs = require("fs");
 const mysql = require("mysql");
