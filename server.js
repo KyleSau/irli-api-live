@@ -623,14 +623,23 @@ function emailDailyReports() {
         .catch(err => {
         });
     });
-  const delay24hr = 24 * 60 * 60 * 1000;
-  setInterval(emailDailyReports, delay24hr);
 }
 
-var now = new Date();
-var millisTill10 = new Date(now.getFullYear(), now.getMonth(), now.getDate(), 12, 0, 0, 0) - now;
-if (millisTill10 < 0) {
-  millisTill10 += 86400000; // if it's after noon, try noon tomorrow.
+function runAtSpecificTimeOfDay(hour, minutes, func)
+{
+  const twentyFourHours = 86400000;
+  const now = new Date();
+  let eta_ms = new Date(now.getFullYear(), now.getMonth(), now.getDate(), hour, minutes, 0, 0).getTime() - now;
+  if (eta_ms < 0)
+  {
+    eta_ms += twentyFourHours;
+  }
+  setTimeout(function() {
+    //run once
+    func();
+    // run every 24 hours from now on
+    setInterval(func, twentyFourHours);
+  }, eta_ms);
 }
-console.log(new Date().toLocaleString());
-setTimeout(function () { emailDailyReports() }, millisTill10);//schedule this every 24 hours loop at 12 noon PDT
+
+runAtSpecificTimeOfDay(12,0,() => { emailDailyReports() });
