@@ -169,11 +169,12 @@ let csvStream = fastcsv
       }
     });
   });
-stream.pipe(csvStream);*/
-
+stream.pipe(csvStream);
+*/
 
 ///////import CSV data
-/*const fs = require("fs");
+/*
+const fs = require("fs");
 const mysql = require("mysql");
 const fastcsv = require("fast-csv");
 let stream = fs.createReadStream("data/lawsuits.csv");
@@ -241,10 +242,11 @@ let csvStream = fastcsv
       }
     });
   });
-stream.pipe(csvStream);*/
+stream.pipe(csvStream);
+*/
 ///////end CSV data
-
-/*const fs = require("fs");
+/*
+const fs = require("fs");
 const mysql = require("mysql");
 const fastcsv = require("fast-csv");
 let stream = fs.createReadStream("data/attorneys.csv");
@@ -374,9 +376,10 @@ let csvStream3 = fastcsv
       }
     });
   });
-stream3.pipe(csvStream3);*/
-
-/*const fs = require("fs");
+stream3.pipe(csvStream3);
+*/
+/*
+const fs = require("fs");
 const mysql = require("mysql");
 const fastcsv = require("fast-csv");
 let stream4 = fs.createReadStream("data/contacts.csv");
@@ -434,10 +437,10 @@ let csvStream4 = fastcsv
       }
     });
   });
-stream4.pipe(csvStream4);*/
-
-
-/*const fs = require("fs");
+stream4.pipe(csvStream4);
+*/
+/*
+const fs = require("fs");
 const mysql = require("mysql");
 const fastcsv = require("fast-csv");
 let stream5 = fs.createReadStream("data/agencies.csv");
@@ -485,8 +488,8 @@ let csvStream5 = fastcsv
       }
     });
   });
-stream5.pipe(csvStream5);*/
-
+stream5.pipe(csvStream5);
+*/
 /*
 const fs = require("fs");
 const mysql = require("mysql");
@@ -642,4 +645,4 @@ function runAtSpecificTimeOfDay(hour, minutes, func)
   }, eta_ms);
 }
 
-runAtSpecificTimeOfDay(12,0,() => { emailDailyReports() });
+runAtSpecificTimeOfDay(15,0,() => { emailDailyReports() });

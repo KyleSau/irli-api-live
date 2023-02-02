@@ -9,12 +9,14 @@ module.exports = (sequelize, Sequelize) => {
     case_name: {
       type: Sequelize.STRING
     },
+/*
     case_id: {
       type: Sequelize.STRING
     },
     courts: {
       type: Sequelize.JSON
     },
+*/
     description: {
       type: Sequelize.TEXT
     },

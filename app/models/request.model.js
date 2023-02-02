@@ -16,13 +16,13 @@ module.exports = (sequelize, Sequelize) => {
       type: Sequelize.STRING
     },
     current_status: {
-      type: Sequelize.STRING
+      type: Sequelize.TEXT
     },
     category: {
       type: Sequelize.STRING
     },
     subject: {
-      type: Sequelize.STRING
+      type: Sequelize.TEXT
     },
     short_description: {
       type: Sequelize.STRING

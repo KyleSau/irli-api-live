@@ -1,0 +1,10 @@
+1	Dale	Wilcox	dwilcox@irli.org	$2a$08$XqDQfBDHVK29u9V30/k/KOdytvNk1Z6I9aFGXqbU4NasULrm/OAXi	Admin	Litigation and Investigations	Yes	2022-09-16 03:23:58	2022-09-16 04:32:22
+2	Kyle	Saunders	kwsaunde@ucsc.edu	$2a$08$6UfXj8ijkSovd/MRJ2OkVuOt1FsGHsu0jYPMIhGQawm8c1ILVHc2q	Developer	Litigation and Investigations	Yes	2022-09-16 03:34:36	2022-09-16 04:35:20
+3	Lorraine	Woodwark	lwoodwark@irli.org	$2a$08$/wMOUv/0HxB5aTGCf5ax4OiOOyn.dUeSCvT1resvJ/OK.Al5WSA5G	Admin	Litigation and Investigations	Yes	2022-09-16 03:35:14	2022-09-16 03:35:14
+4	Jason	Hopkins	jhopkins@irli.org	$2a$08$eCyaOTqiX1LBfRKta914gOi.BJSiUexhLgLIrVyCxpY812fYoafwO	Admin	Investigations	No	2022-09-16 04:22:46	2022-09-16 04:22:46
+5	Gina	D'Andrea	gdandrea@irli.org	$2a$08$22xA1jo6kjQhTjlq3lJKHOa6pgQK8m71BF92RJGOYQ2zi5gH8QvTG	User	Litigation	Yes	2022-09-16 04:30:06	2022-09-16 04:30:06
+6	Chris	Hajic	chajec@irli.org	$2a$08$DJPp/O6ANIqjmsuPGhUHauNozdep4.4vretNYW3661VE60QIR4Oqa	Moderator	Litigation	Yes	2022-09-16 04:31:32	2022-09-16 04:31:32
+7	John	Miano	jmiano@irli.org	$2a$08$CoyDwlXZQ1EkHlll5Zyj0.i6bpz19YRpu0mxpLLFlzMiBG/M2ynQq	User	Litigation	Yes	2022-09-16 04:32:09	2022-09-16 04:32:09
+8	Matt	O'Brien	mobrien@irli.org	$2a$08$iqSTxZL3ebR81Sj/i8smIOV6R06jjjCcLJdKILdcnIl40l5Y.DIn2	User	Litigation	Yes	2022-09-16 04:33:05	2022-09-16 04:33:05
+9	Ralph	Casale	rcasale@irli.org	$2a$08$1YjuyX2HorV4W6XV2d2Vk.xznjGC49SKYhg2p.uhZtBFAAcN5lrjG	User	Litigation	Yes	2022-09-16 04:33:32	2022-09-16 04:33:32
+									

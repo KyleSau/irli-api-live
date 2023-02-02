@@ -1,0 +1,497 @@
+<!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.01 Transitional//EN" "http://www.w3.org/TR/html4/loose.dtd"><html>
+<head>
+	<title>Case Search</title>
+	<META http-equiv="Content-Type" content="text/html; charset=iso-8859-1">
+<link rel='stylesheet' type='text/css' media='all' href='TransportRoom?servlet=ShowPagePublic&amp;page=PACER.css' />
+<STYLE type='text/css' media='print'>.noprint{display:none;}</STYLE></head>
+<body>
+
+<!--    \/   below from HUtil.getJSFuncs()   \/   -->
+<SCRIPT type="text/javascript">
+function trim(value)
+{
+	var strValue = value.replace(/^\s+|\s+$/g,'');
+	return strValue;
+}
+function isEmpty(s)
+{ return ((s == null) || (s.length == 0)) }
+function isInt(input) {
+	var lo_str = '' + input;
+	var cond = 0;
+	if (lo_str.length == 0) {
+		return(0);
+	}
+	for (var i = 0; i < lo_str.length; i++) {
+		var c = lo_str.charAt(i);
+		if (c == ' ' ) {
+			if (cond == 1) cond = 2;
+		} else {
+			if (cond == 0) cond = 1;
+			else if (cond == 2) return (0);
+			if (c < '0' || c > '9') return(0);
+		}
+	}
+	return(1);
+}
+function isInt2(input) {
+	if (input == '')
+		return (1);
+	var lo_str = '' + input;
+	for (var i = 0; i < lo_str.length; i++) {
+	var c = lo_str.charAt(i);
+		if (i == 0 && c == '-') continue;
+		if (c < '0' || c > '9') return(0);
+	}
+	return(1);
+}
+function empty(s) {
+	var whitespace = ' \t\n\r';
+	if (s == null || s.length == 0)
+	{ return(true); }
+	// Is s only whitespace characters?
+	for (var i = 0; i < s.length; i++) {
+		var c = s.charAt(i);
+		if (whitespace.indexOf(c) == -1) return false;
+	}
+	return(true);
+}
+function ClearTimer() {
+	BeenHere = 0;
+	clearTimeout(timerId);
+	return(true);
+}
+function badCaseMsg(input, allowMulti, field) {
+	var msg;
+	var msg0 = "Please enter a valid case number.";
+	var msg1 = "Case number (";
+	var msg2 = ") invalid; format is yy-nnnn or yy-nnnnn.";
+	var msg3 = "\nMultiple case numbers should be comma-separated.";
+	if (input == null || input.replace(/^\s+|\s+$/g,'').length == 0) {
+		msg = msg0;
+	} else {
+		msg = msg1+input+msg2;
+		if (allowMulti) {
+			msg += msg3;
+		}
+	}
+	alert(msg);
+	if (field != null) {
+		field.focus();
+		field.select();
+	}
+	return false;
+}
+function CheckCaseNum(str,opt,allowMulti,field) {
+	if (str != null) {
+		str = str.replace(/^[\s,]+|[\s,]+$/g, '');
+		if (field != null) {
+			field.value = str;
+		}
+	}
+	if (str == null || str == '') {
+		if (opt != null && opt == true) {
+			return(true);
+		}
+		return badCaseMsg(str,false,field);
+	}
+	if (allowMulti != null && allowMulti == false) {
+		if (str.indexOf(',')>-1) {
+			return badCaseMsg(str,false,field);
+		}
+	}
+	var len = str.length;
+	var offset = 0, start = 0;
+	var token = '';
+	while ( offset < len) {
+		while ( str.charAt(start) == '\n' && start < len) {
+			start = start + 1;
+		}
+		offset = str.indexOf(',', start);
+		if (offset < 0) {
+			offset = str.indexOf(',', start);
+			if (offset < 0) {
+				offset = len; 
+			}
+		}
+		if (offset > 0) {
+			token = str.substring(start, offset);
+			token = trim(token);
+			if (token != null && token != '') {
+				if (!EvalCaseNum(token,allowMulti,field)) {
+					return false;
+				}
+			}
+			start = offset + 1;
+		}
+	}
+	return true;
+}
+function EvalCaseNum(str,allowMulti,field) {
+	var len = str.length;
+	var dash = str.indexOf('-',0);
+	if (dash < 0) {
+		return badCaseMsg(str,allowMulti,field);
+	}
+	var num = str.substring(dash+1,len);
+	var numlen = num.length;
+	var firstdigit = str.substring(0,dash);
+	var lengthfirstdigit = firstdigit.length;
+	if (lengthfirstdigit == 0 || lengthfirstdigit > 2) {
+		return badCaseMsg(str,allowMulti,field);
+	}
+	if ((isInt(str.substring(0,dash)) || str.substring(0,dash) == '00')
+			&& isInt(str.substring(dash+1,len))
+			&& numlen < 6) {
+			return(true);
+	} else {
+		return badCaseMsg(str,allowMulti,field);
+	}
+}
+var timerId;
+var BeenHere = 0;
+
+function isValidChar(c) {
+	return ( ((c >= '0') && (c <= '9')) || (c == '-') )
+}
+function CheckDate(DateVal, FldNeeded, DateLoc, DateName, relDateOK) {
+	if (DateName == null || DateName.length == 0) {
+		DateName = 'Date';
+	}
+//relDateOK means to accept a numeric field for relative dates
+	if (relDateOK != null && relDateOK == true) {
+		if (isInt2(DateVal) > 0)
+			return 1;
+	}
+	if (DateLoc == null) {
+		cnt = 0;
+		while (cnt < document.forms[0].length) {
+			if (!isEmpty(document.forms[0].elements[cnt]) && document.forms[0].elements[cnt].value == DateVal) {
+				DateLoc = document.forms[0].elements[cnt];
+				break;
+			}
+			cnt++;
+		}
+	}
+	if (DateVal == null || DateVal == '') {
+		if (FldNeeded) {
+			alert( DateName + ' must not be blank. Enter a valid date--format MM/DD/[yy]YY ' );
+			if (DateLoc) {
+				DateLoc.focus();
+				DateLoc.select();
+			}
+			return 0;
+		}
+		return 2;
+	}
+	var len = DateVal.length;
+	if (len > 10) {
+		alert( DateName + ' cannot be longer than 10 characters--format MM/DD/[yy]YY ' );
+		if (DateLoc) {
+			DateLoc.focus();
+			DateLoc.select();
+		}
+		return 0;
+	}
+	var dash = DateVal.indexOf('/',0);
+	var dash2 = DateVal.lastIndexOf('/');
+	if (dash2 < dash + 2) {
+		alert( DateName + ' has invalid format--format needed MM/DD/[yy]YY ' );
+		if (DateLoc) {
+			DateLoc.focus();
+			DateLoc.select();
+		}
+		return(0);
+	}
+	var month = checkit(DateVal.substring(0,dash), 0);
+	if (month < 0) {
+		alert( DateName + ' has invalid month--format MM/DD/[yy]YY ' );
+		if (DateLoc) {
+			DateLoc.focus();
+			DateLoc.select();
+		}
+		return 0;
+	}
+	if ((DateVal.substring(dash2+1,len) == '')) {
+		alert( DateName + ' has invalid year--format MM/DD/[yy]YY ' );
+		if (DateLoc) {
+			DateLoc.focus();
+			DateLoc.select();
+		}
+		return 0;
+	}
+	var year = checkit(DateVal.substring(dash2+1,len), 1);
+	if ((year > 100) && (year < 1850 || year > 3000)) {
+		year = -1;
+	}
+	if (year < 0) {
+		alert( DateName + ' has invalid year--format MM/DD/[yy]YY ' );
+		if (DateLoc) {
+			DateLoc.focus();
+			DateLoc.select();
+		}
+		return 0;
+	}
+	var day = daycheck(DateVal.substring(dash+1,dash2), month, year);
+	if (day < 0) {
+		alert( DateName + ' has invalid day--format MM/DD/[yy]YY ' );
+		if (DateLoc) {
+			DateLoc.focus();
+			DateLoc.select();
+		}
+		return 0;
+	}
+	if (month < 10 && (''+month).length ==1 ) {
+		month = '0'+month;
+	}
+	if (day < 10 && (''+day).length ==1 ) {
+		day = '0'+day;
+	}
+	if (DateLoc) {
+		if (year < 31)
+		{ year = 2000 + year; }
+		else if (year >= 31 && year < 100) 
+		{ year = 1900 + year; }
+		DateLoc.value = ''+month+'/'+day+'/'+year;
+	}
+	return 1;
+}
+function checkit(input,type) {
+	var n = '' + input;
+	var cond = 0;
+	var count = 0;
+	var cnt_lim = 2;
+	var ret = 0;
+	if (type)
+	{ cnt_lim = 4; }
+	for (var i = 0; i < n.length; i++) {
+		var c = n.charAt(i);
+		if (c == ' ' ) {
+			if (cond == 1)
+			{ cond = 2; }
+		} else {
+			if (cond == 0)
+			{ cond = 1; }
+			else if (cond == 2)
+			{ return (-1); }
+			if (c < '0' || c > '9')
+			{ return (-1); }
+			else
+			{
+				if (count == cnt_lim) return (-1);
+				else count++;
+				var numb = c - '0';
+				ret = ret * 10 + numb;
+			}
+		}
+	}
+	if (type == 0) {
+		if (ret > 0 && ret < 13) return ret;
+		else return (-1);
+	}
+	else return ret;
+}
+function daycheck(str, arg1, arg2) {
+	var dayx = checkit(str, 1);
+	if (dayx <= 0) return (-1);
+	if (dayx < 29) return dayx;
+	if (arg1 == 1 || arg1 == 3 || arg1 == 5 || arg1 == 7 || arg1 == 8 || arg1 == 10 || arg1 == 12) {
+		if (dayx < 32) return dayx;
+		else return (-1);
+	} else if (arg1 == 4 || arg1 == 6 || arg1 == 9 || arg1 == 11) {
+		if (dayx < 31) return dayx;
+		else return (-1);
+	} else if (dayx == 29 && arg2%4 == 0) return dayx;
+	else return (-1);
+}
+function CompareCaseNum(fromCase, toCase, msg, fld) {
+	//assumes the case numbers have already been validated!
+	if (msg == null || trim(msg).length == 0)
+		msg = 'The start case cannot be larger than the end case';
+	if (fromCase == null || fromCase.length == 0)
+		return 1;
+	if (toCase == null || toCase.length == 0)
+		return 1;
+	var fromArray = fromCase.split('-');
+	var toArray = toCase.split('-');
+	var fromYear = Number(fromArray[0]);
+	var fromNum = Number(fromArray[1]);
+	var toYear = Number(toArray[0]);
+	var toNum = Number(toArray[1]);
+	if (fromYear < 50 && Math.abs(fromYear-toYear) > 20)
+		fromYear = fromYear + 100;
+	if (toYear < 50 && Math.abs(fromYear-toYear) > 20)
+		toYear = toYear + 100;
+	if ((fromYear - toYear > 0 )
+		|| (fromYear - toYear == 0 && fromNum - toNum > 0)) {
+		alert(msg);
+		if (fld != null) {
+			fld.focus();
+			fld.select();
+		}
+		return 0;
+	}
+	return 1;
+}
+function CompareDateFT(ToDate, FromDate, Msg, ToDateName, FromDateName, FldLoc) {
+	if ( ToDate == null || ToDate == '' )
+	{ return( true ); }
+	if ( FromDate == null || FromDate == '' )
+	{ return( true ); }
+	if ( (Date.parse( ToDate ) - Date.parse( FromDate )) < 0 ) {
+		if ( Msg == 'custom' ) {
+			alert( ToDateName + '(' + ToDate + ') must be greater than ' + FromDateName + '(' + FromDate + ')' ); 
+		} else {
+			alert ( Msg );
+		}
+		if (FldLoc != null) {
+			FldLoc.focus();
+			FldLoc.select();
+		}
+		return (false);
+	}
+	return( true );
+}
+</SCRIPT>
+<!--    /\   above from HUtil.getJSFuncs()   /\   -->
+
+<script type="text/javascript">
+function validateForm() {
+	f1 = document.forms[0];
+	if( ! CheckCaseNum(f1.csnum1.value,true,false,f1.csnum1) ){return 0;}
+	if( ! CheckCaseNum(f1.csnum2.value,true,false,f1.csnum2) ){return 0;}
+	if( ! CompareCaseNum(f1.csnum1.value,f1.csnum2.value,null,f1.csnum1) ){
+		return 0;
+	}
+	// remove leading and trailing whitespace (back end also does this)
+	if (f1.aName.value.length > 0)
+		f1.aName.value = f1.aName.value.replace(/^\s*/g,"").replace(/\s*$/g,"");
+
+	if (false && f1.aName.value.length > 0 && !f1.searchPty.checked &&
+		!f1.searchAty.checked) {	// false is debug ONLY!!
+			alert("A name search requires the Party or Attorney checkbox " +
+				"to be checked!");
+		return 0;
+	}
+	//  we have a name              it has less than two non-wild characters
+	if (f1.aName.value.length > 0 && !f1.exactMatches.checked &&
+		f1.aName.value.replace(/[,\s\*\?]/g,"").length < 2 ) {
+			alert("A name search should have at least 2 " +
+				"non-wildcard characters!");
+			return 0;
+	}
+	//issue 25164
+	if (f1.exactMatches.checked) {
+		for (i =0; i <= f1.aName.value.length -1; i++) {
+			if (f1.aName.value.charAt(i) == "*" || f1.aName.value.charAt(i) == "?") {
+				alert("Wildcard search not allowed when 'Exact Matches Only' is checked.");
+				return 0;
+			}
+		}
+	}
+
+
+	f1.submit();
+}
+</script>
+<div class="noprint">
+<TABLE BORDER=0 CELLSPACING=0 CELLPADDING=0 width='100%'  bgcolor="#0000af" >
+<TR><TD>
+	<!-- THESE ITEMS ARE ON THE LEFT PORTION OF THE MENU -->
+	<TABLE BORDER=0 CELLSPACING=0 CELLPADDING=0 ALIGN=left  bgcolor="#0000af" >
+	<TR  VALIGN=middle ALIGN=left>
+		<TD><a href='/n/AttorneyFiling'><img src="TransportRoom?servlet=cmecf_logo.gif" alt="CM/ECF" title="File"></a></TD>
+		<TD><a  style="color: #ffffff; font-weight:bold;"  href="TransportRoom?servlet=CaseSearch.jsp">Case Search</a>&nbsp;&nbsp;&nbsp;</TD>
+		<TD><a  style="color: #ffffff; font-weight:bold;"  href="TransportRoom?servlet=PACERCalendar.jsp">Calendar</a>&nbsp;&nbsp;&nbsp;</TD>
+		<TD><a  style="color: #ffffff; font-weight:bold;"  href="TransportRoom?servlet=PACEROpinion.jsp">Opinions</a>&nbsp;&nbsp;&nbsp;</TD>
+		<TD><a  style="color: #ffffff; font-weight:bold;"  href="TransportRoom?servlet=OrderJudgment.jsp" >Orders/Judgments</a>&nbsp;&nbsp;&nbsp;</TD>
+<TD><a  style="color: #ffffff; font-weight:bold;"  href="TransportRoom?servlet=Briefs.jsp">Briefs</a>&nbsp;&nbsp;&nbsp;</TD>
+</TR>
+	</TABLE>
+</TD><TD>
+<!-- THESE ITEMS ARE ON THE RIGHT PORTION OF THE MENU -->
+	<TABLE BORDER=0 CELLSPACING=0 CELLPADDING=0 align="right"  bgcolor="#0000af" >
+	<TR>
+<TD><a  style="color: #ffffff; font-weight:bold;"  href="TransportRoom?servlet=InvalidUserLogin.jsp&logout=y">Logout</a>&nbsp;&nbsp;&nbsp;</TD>
+<TD><a  style="color: #ffffff; font-weight:bold;"  href="TransportRoom?servlet=PacerHelp.jsp#CaseSearch">Help</a>&nbsp;&nbsp;</TD>
+	</TR>
+	</TABLE>
+</TD></TR>
+</TABLE>
+<BR>
+</div>
+<div class='pageTitle'>Case Search</div><BR>
+<form action="TransportRoom" method="post" >
+<input name="servlet" type="hidden" value="CaseSelectionTable.jsp">
+<input name='CSRF' type='hidden' value='csrf_-6187171665644640872'><center>
+<table BORDER=0 CELLSPACING=1 CELLPADDING=3 >
+<tr>
+<td ALIGN='RIGHT' VALIGN='top'><b>Case Number / Range:</b></td>
+<td ALIGN='LEFT' VALIGN='bottom' colspan=9>
+<TABLE Border=0 cellpadding=0 cellspacing=0>
+<TR>
+<td>
+	<input name='csnum1' size='8'
+		onChange='CheckCaseNum(this.value,true,false,this)'>&nbsp;</td>
+<td>
+	<input name='csnum2' size='8'
+		onChange='CheckCaseNum(this.value,true,false,this)'></td>
+<td>
+	&nbsp;<font class='exampleSampleInput'>(yy-nnnn or yy-nnnnn)</font>
+</td>
+</TR>
+</TABLE></td></tr>
+<tr>
+	<td ALIGN="RIGHT" VALIGN='top'><b>Party / Attorney:</b></td>
+	<td align='left' valign="middle">
+		<table BORDER=0 CELLSPACING=0 CELLPADDING=0 >
+		<tr ALIGN=LEFT>
+			<td style="vertical-align: center;">
+			<!--
+				Blackberry 8830 cannot handle a field called name
+				in the JavaScript validation, so changed to aName
+				here and in CaseSelectionTable.jsp
+			-->
+			<input name="aName" size="21">
+			<font class='exampleSampleInput'>(Last, First)</font>
+			<BR>
+			<input type="checkbox" name="searchPty" value="pty" checked="checked">Party&nbsp;
+			<input type="checkbox" name="searchAty" value="aty">Attorney&nbsp;
+			<input type="checkbox" name="exactMatches" value="exactMatches" >Exact Matches Only
+			</td>
+		</tr>
+		</table>
+	</td>
+</tr>
+<tr>
+<td colspan='2' align="center"><BR>
+<a href='TransportRoom?servlet=CaseSearch.jsp&amp;advancedSearch=Advanced'>
+Advanced Search</a>
+</td>
+</tr>
+<tr align="center">
+	<td colspan=2><BR>
+		<INPUT NAME='SearchButton' VALUE='Search' TYPE='button'
+			ONCLICK=' validateForm() '>
+		<input name="button1" value="Clear" type='reset'>
+	</td>
+</tr>
+</table>
+</center>
+</form>
+<div class='noprint'>
+<HR>
+<center>
+<table BORDER=0 CELLSPACING=0 CELLPADDING=3 style="width: 95%; text-align: center; margin-left: auto; margin-right: auto;" >
+<tr>
+<TD><a href='TransportRoom?servlet=CourtInfo.jsp&amp;menu=yes'>Court Information</a>&nbsp;&nbsp;</TD>
+<TD><a href="http://www.ca10.uscourts.gov/">Court Home</a>&nbsp;&nbsp;</TD>
+<TD><a href="http://www.pacer.gov">PACER Service Center</a>&nbsp;&nbsp;</td>
+ <TD><a href='https://pacer.login.uscourts.gov/csologin/login.jsf?pscCourtId=10CA&appurl=https://ecf.ca10.uscourts.gov/n/beam/servlet/TransportRoom'>Change Client</a>&nbsp;&nbsp;</td>
+<TD><a href="https://pacer.login.uscourts.gov/csobill-hist/billingmenu.jsf" target="_blank" >Billing History</a>&nbsp;&nbsp;</TD>
+<TD><a href="mailto:pacer@psc.uscourts.gov?Subject=Appellate_PACER_comment">Contact Us</a>&nbsp;&nbsp;</td>
+</tr>
+</table>
+</center>
+</div>
+</body>
+</html>
