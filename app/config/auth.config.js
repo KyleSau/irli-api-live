@@ -1,3 +1,5 @@
+require('dotenv').config(); // Load environment variables from .env file
+
 module.exports = {
-  secret: "bezkoder-secret-key"
+  secret: process.env.SECRET_KEY
 };
